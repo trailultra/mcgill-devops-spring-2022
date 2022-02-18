@@ -25,7 +25,7 @@ This set of exercises uses GitHub, GitHub Actions, and the Azure Portal.
 - [ ] Create a GitHub account if you do not already have one by following the instructions found on the [GitHub Signup Page](https://github.com/signup)
     - [ ] Use this repository as the starting point for your labs by creating a Fork. 
         
-        ![Fork Button](docs/images/lab-1/fork_button.jpeg)
+        ![Fork Button](assets/lab-1/fork_button.jpeg)
 
     > **Note:** If your github is a member of an organization, ensure your Fork is created under your personal GitHub account
 

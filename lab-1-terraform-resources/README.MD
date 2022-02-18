@@ -15,7 +15,7 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
 
     - [ ] Launch Azure Cloud Shell from the top navigation panel
         
-        ![Azure Cloud Shell](../docs/images/lab-1/shell-icon.png)
+        ![Azure Cloud Shell](../assets/lab-1/shell-icon.png)
 
         Select your "Free Trial" Subscription to create a storage account for your Cloud Shell and click "Create Storage"
 
@@ -57,3 +57,42 @@ In the Azure Portal - use  "Cloud Shell" so you dont have to install the Azure C
 ```
 az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
 ```
+
+
+
+Terraform must store state about your managed infrastructure and configuration. This state is used by Terraform to map real world resources to your configuration, keep track of metadata, and to improve performance for large infrastructures.
+
+1
+2
+3
+4
+5
+6
+7
+8
+# Create Resource Group
+az group create -n tamopstfstates -l eastus2
+ 
+# Create Storage Account
+az storage account create -n tamopstf -g tamopstfstates -l eastus2 --sku Standard_LRS
+ 
+# Create Storage Account Container
+az storage container create -n tfstatedevops 
+Azure Service Principal
+Next we create a service principal that will be used by Terraform to authenticate to Azure (Note down password)
+
+1
+2
+# Create Service Principal 
+az ad sp create-for-rbac --name tamopstf2
+Assign role assignment to this newly created service principal (RBAC) to the required subscription. Further details on RBAC roles is documented here
+
+Saving Service Principal credentials within GitHub Repository as secrets
+Within the GitHub repository to where you are going to be running the terraform from, select settings -> secrets
+
+Add 4 secrets
+
+AZURE_AD_CLIENT_ID – Will be the service principal ID from above
+AZURE_AD_CLIENT_SECRET – The secret that was created as part of the Azure Service Principal
+AZURE_AD_TENANT_ID – The Azure AD tenant ID to where the service principal was created
+AZURE_SUBSCRIPTION_ID – Subscription ID of where you want to deploy the Terraform
