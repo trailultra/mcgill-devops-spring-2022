@@ -1,0 +1,46 @@
+name: Terraform Compliance Checks
+on:
+  push:
+    paths:
+    - "lab-1-terraform-resources/terraform/resource-group/"
+defaults:
+  run:
+    working-directory: lab-1-terraform-resources/terraform/resource-group
+jobs:
+  test:
+      runs-on: ubuntu-latest
+      name: Terraform Compliance Testing
+      env:
+        ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      steps:
+        - name: 'Checkout'
+          uses: actions/checkout@master
+        - uses: hashicorp/setup-terraform@v1
+          with:
+            terraform_version: 0.14.x
+        - uses: terraform-compliance/github_action@main
+        # Check for formatting
+        - name: Terraform Formatting Validation
+          run: |
+              terraform fmt -check -diff -no-color | tee fmt.log
+              REPORT="$(cat fmt.log)"
+              REPORT="${REPORT//'%'/'%25'}"
+              REPORT="${REPORT//$'\n'/'%0A'}"
+              REPORT="${REPORT//$'\r'/'%0D'}"
+              echo "::set-output name=logfmt::$REPORT"
+          continue-on-error: true
+        - name: Terraform Initialization
+          id: init
+          run: terraform init
+        - name: Generate Terraform PLan
+          id: plan
+          run: |
+            terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
+        - name: Check Plan for Compliance Violations
+          uses: terraform-compliance/github_action@main
+          with:
+            plan: plan.out.json
+            features: lab-1-terraform-resources/terraform/compliance
