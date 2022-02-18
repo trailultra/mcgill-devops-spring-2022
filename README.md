@@ -5,6 +5,8 @@
 
 
 
+
+
 ## Lab Exercise 1: Configuring Cloud Deployments with Terraform
 
 In this exercise, you will practice using the core components of terraform including providers, modules and resources to create and manage the lifecycle of cloud based resources.
@@ -34,7 +36,7 @@ This set of exercises uses GitHub, the Azure Portal and Azure DevOps Pipelines.
 
 - [ ] Create a new Azure DevOps Organization from the [Services page of the Azure Portal](https://portal.azure.com/#allservices/category/DevOps)
     - [ ] Create a new project in your Azure DevOps Organization. This will be used for both Lab 1 and Lab 2.
-        ![Azure DevOps Project](docs/images/lab-1/fork_button.jpeg)
+        ![Azure DevOps Project](docs/images/lab-1/azure-devops-project.png)
 
 - [ ] Connect your GitHub repositories to your Azure DevOps project
     - [ ] Install  `Azure Pipelines` from the GitHub Marketplace
@@ -56,6 +58,7 @@ This set of exercises uses GitHub, the Azure Portal and Azure DevOps Pipelines.
 
         - You will be redirected to the Azure Pipelines site to finish the connections. 
         Ensure that the Azure DevOps organization, and Projects match what you created earlier
+
         ![Connection Azure DevOps Project](docs/images/lab-1/connect-project.png)
     
 - [ ] Continue on to [Lab 1 - Creating Terraform Resources](lab-1-terraform-resources/README.MD)
