@@ -12,7 +12,7 @@ jobs:
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
-          directory: lab-1-terraform-resources/terraform/*/
+          directory: lab-1-terraform-resources/terraform/
           soft_fail: true # optional: do not return an error code if there are failed checks
           framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
           output_format: github_failed_only # optional: the output format, one of: cli, json, junitxml, github_failed_only, or sarif. Default: sarif
