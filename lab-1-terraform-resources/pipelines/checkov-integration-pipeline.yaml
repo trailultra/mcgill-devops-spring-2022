@@ -30,28 +30,3 @@ stages:
       - script: |
           docker run -t -v $(terraformWorkingDirectory):/tf bridgecrew/checkov --directory /tf
         displayName: 'Terraform Static Code Analysis using Checkov'
-      # Step 2: install Terraform on the Azure Pipelines agent
-      - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-        displayName: 'Install Terraform'
-        inputs:
-          terraformVersion: $(terraformVersion)
-      # Step 3: run Terraform init to initialize the workspace
-      - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
-        displayName: 'Run terraform init'
-        inputs:
-          command: init
-          workingDirectory: $(terraformWorkingDirectory)
-      # Step 4: run Terraform validate to validate HCL syntax
-      - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
-        displayName: 'Run terraform validate'
-        inputs:
-          command: validate
-          workingDirectory: $(terraformWorkingDirectory)
-      # Step 5: run Terraform plan to validate HCL syntax
-      - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
-        displayName: 'Run terraform plan'
-        inputs:
-          command: plan
-          workingDirectory: $(terraformWorkingDirectory)
-          environmentServiceName: $(serviceConnection)
-          commandOptions: -var location=$(azureLocation)
