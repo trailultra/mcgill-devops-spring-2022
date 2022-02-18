@@ -2,11 +2,11 @@ name: Terraform Compliance Checks
 on:
   push:
     paths:
-    - "lab-1-terraform-resources/resource-group/*"
+    - "lab-1-terraform-resources/terraform/resource-group/"
     - ".github/workflows/terraform-compliance-actions.yml"
 defaults:
   run:
-    working-directory: lab-1-terraform-resources/resource-group
+    working-directory: lab-1-terraform-resources/terraform/resource-group
 jobs:
   test:
 
