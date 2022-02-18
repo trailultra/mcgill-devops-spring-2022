@@ -27,17 +27,17 @@ jobs:
         # Check for formatting
         - name: Terraform Formatting Validation
           run: |
-              terraform fmt -check -diff -no-color | tee fmt.log
+              terraform fmt -check -no-color | tee fmt.log
               REPORT="$(cat fmt.log)"
               REPORT="${REPORT//'%'/'%25'}"
               REPORT="${REPORT//$'\n'/'%0A'}"
               REPORT="${REPORT//$'\r'/'%0D'}"
               echo "::set-output name=logfmt::$REPORT"
           continue-on-error: true
-        - name: Terraform Init 
+        - name: Terraform Initialization
           id: init
           run: terraform init
-        - name: terraform plan
+        - name: Generate Terraform PLan
           id: plan
           run: |
             terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
