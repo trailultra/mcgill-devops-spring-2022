@@ -17,8 +17,8 @@ variables:
   terraformWorkingDirectory: '$(System.DefaultWorkingDirectory)/lab-1-terraform-resources/terraform/*'
   terraformVersion: '0.12.25'
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 steps:
 - script: |
       docker run -t -v $(terraformWorkingDirectory):/tf bridgecrew/checkov --directory /tf
-  name: 'Terraform Static Code Analysis using Checkov'
+  displayName: 'Terraform Static Code Analysis using Checkov'
