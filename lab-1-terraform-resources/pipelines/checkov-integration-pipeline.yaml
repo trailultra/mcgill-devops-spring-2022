@@ -1,16 +1,4 @@
-# Azure Pipeline that run basic continuous integration on a Terraform project
-
-# This makes sure the pipeline is triggered every time code is pushed on all branches.
-trigger:
-  branches:
-    include:
-    - '*'
-  paths:
-    include:
-    - 'lab-1-terraform-resources/terraform/*'
 pool:
   vmImage: 'ubuntu-latest'
 steps:
-- script: |
-      docker run -t -v $(System.DefaultWorkingDirectory)/lab-1-terraform-resources/terraform:/tf bridgecrew/checkov --directory /tf
-  displayName: 'Terraform Static Code Analysis using Checkov'
+- bash: echo "Hello world"
