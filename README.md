@@ -33,5 +33,7 @@ This set of exercises uses GitHub, GitHub Actions, and the Azure Portal.
     
     > **Note:** Use a personal email address, not one that is associated with an existing Azure account    
 
-- [ ] Continue on to [Lab 1 - Creating Terraform Resources](lab-1-terraform-resources/README.MD)
+## Labs
+
+- [Lab 1 - Creating Terraform Resources](lab-1-terraform-resources/README.MD)
 
