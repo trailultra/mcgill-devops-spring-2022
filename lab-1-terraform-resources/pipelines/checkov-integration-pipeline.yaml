@@ -17,16 +17,9 @@ variables:
   terraformWorkingDirectory: '$(System.DefaultWorkingDirectory)/lab-1-terraform-resources/terraform/*'
   terraformVersion: '0.12.25'
 
-stages:
-  - stage: TerraformContinuousIntegration
-    displayName: Terraform Module - CI
-    jobs:
-    - job: TerraformContinuousIntegrationJob
-      displayName: TerraformContinuousIntegration - CI Job
-      pool:
-        vmImage: ubuntu-20.04
-      steps:
-      # Step 1: run the Checkov Static Code Analysis
-      - script: |
-          docker run -t -v $(terraformWorkingDirectory):/tf bridgecrew/checkov --directory /tf
-        displayName: 'Terraform Static Code Analysis using Checkov'
+pool:
+  vmImage: ubuntu-20.04
+steps:
+  - script: |
+      docker run -t -v $(terraformWorkingDirectory):/tf bridgecrew/checkov --directory /tf
+    displayName: 'Terraform Static Code Analysis using Checkov'
