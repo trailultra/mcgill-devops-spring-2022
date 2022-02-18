@@ -41,7 +41,7 @@ jobs:
           id: plan
           run: |
             terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
-        - name: terraform-compliance
+        - name: Check Plan for Compliance Violations
           uses: terraform-compliance/github_action@main
           with:
             plan: plan.out.json
