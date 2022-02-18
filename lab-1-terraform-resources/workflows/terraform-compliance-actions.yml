@@ -1,0 +1,80 @@
+on: [push]
+  paths:
+    - "**.tf"
+    - ".github/workflows/terraform-compliance-actions.yml"
+jobs:
+  changed:
+    runs-on: ubuntu-latest
+    outputs:
+      # We output the changed_dirs coming from the discovery step
+      # to the job. Hence any other job that "needs" this job can
+      # use this output
+      dirs: ${{ steps.discovery.outputs.changed_dirs }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # We want to fetch ALL history, otherwise the git diff command
+          # will not work, since by default Github Actions clones only
+          # the latest commit without any history.
+          fetch-depth: 0
+      - run: git checkout HEAD^
+      - name: discovery
+        id: discovery
+        # 1. Get the changed directories between current branch and master branch
+        # 2. Create json structure that github actions will understand
+        # Here is the json structure that is created from this commands ;
+        #
+        # {"include":[{"module":"no_rotation"},{"module":"pass"}]}
+        #
+        run: |
+          data=$(git diff --name-status master | awk '{print $2}' | cut -d "/" -f1 | sort | uniq | tr "\n" "|")
+          changed=$(jq -Rnc '(input | split("|") ) as $key | $key | del(.[] | select(. == "")) | [{module: .[]}] | {include: .}'<<<$data)
+          echo "::set-output name=changed_dirs::$changed" 
+  test:
+      runs-on: ubuntu-latest
+      # We use needs here not only for running discovery function earlier,
+      # but also to be able to reach their outputs
+      needs:
+        - changed
+      # This will create a separate job dynamically per each module
+      # hence it will all run in parallel.
+      strategy:
+        matrix: ${{ fromJson(needs.changed.outputs.dirs )}}
+        fail-fast: false
+        max-parallel: 5
+
+      # This will be translated to test_aws-kms-key
+      name: ${{ format('test_${0}', matrix.module) }}
+
+      defaults:
+        run:
+          # Changing to the module directory (e.g. aws-kms-key)
+          working-directory: ${{ matrix.module }}
+
+      # These are just read-only key for plan
+      env:
+        ARM_CLIENT_ID: <client-id>
+        ARM_CLIENT_SECRET: ${{secrets.TF_ARM_CLIENT_SECRET}}
+        ARM_SUBSCRIPTION_ID: <subscription-id>
+        ARM_TENANT_ID: <tenant-id>
+      steps:
+        - uses: actions/checkout@v2
+        - uses: hashicorp/setup-terraform@v1
+          with:
+            terraform_version: 0.14.x
+        - uses: terraform-compliance/github_action@main
+        # Check for formatting
+        - name: formatting check
+          run: terraform fmt --check     
+        - name: Terraform Init 
+          id: init
+          run: terraform init
+        - name: terraform plan
+          id: plan
+          run: |
+            terraform init && terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
+        - name: terraform-compliance
+          uses: terraform-compliance/github_action@main
+          with:
+            plan: plan.out.json
+            features: lab-1-terraform-resources/terraform/compliance
