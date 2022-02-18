@@ -5,15 +5,11 @@ In this exercise, you will practice using the core components of terraform inclu
 
 ## Exercise objectives
 
-Create a multi-stage Azure DevOps Pipeline to deploy Azure-based resources that include integration and compliance testing of IaC objects as well as a manual approval stage prior to resource deployment
+Create a multi-stage GitHub Action to deploy Azure-based resources that include integration and compliance testing of IaC objects as well as a manual approval stage prior to resource deployment
 
 ## Environment Setup
 
 All steps in this lab exercise should be completed using the Azure Cloud Shell environment. All required tools including the Azure CLI, HashiCorp Terraform and the git CLI come pre-installed in this Cloud Shell Environment
-
-- [ ] Install the [Terraform build/release tasks extension](https://marketplace.visualstudio.com/items?itemName=charleszipp.azure-pipelines-tasks-terraform) into your Azure DevOps organization.
-
-- [ ] Create a [Service Connection]() to enable Azure DevOps Pipelines to create resources in your Azure subscription
 
 - [ ] Login to the [Azure Portal](https://portal.azure.com/) with the login information you created
 
@@ -42,26 +38,9 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
      > **Hint:** You can get your GitHub repository URL from the CODE button drop down on the repository main page
 
 
-## Creating a new Azure DevOps Pipeline
+## Creating GitHub Actions
 
 
-Open your Azure DevOps project and go into the Azure Pipelines section. Click on the `Create Pipeline` button. On the `Where is your code?` select GitHub (YAML):
-
-![Where is your code?](assets/new-pipeline-where-github-yaml.png)
-
-> Note: At this step, you might have to authorize Azure DevOps to access your organization, if you've not done that already. If you are not familiar with building GitHub repositories using Azure Pipelines you can have a look to [this documenation page](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml).
-
-In the repositories list, select the fork of this repository that you have created previously in your GitHub organization. In the `Configure your pipeline` step, choose to start from an existing YAML pipeline:
-
-![Existing YAML pipeline](assets/new-pipeline-existing-yaml.png)
-
-In the popup that opens, fill with the branch `main` and the path to the YAML pipeline `examples/basic-testing/src/azure-pipeline.yaml`:
-
-![Select existing YAML pipeline](assets/select-existing-yaml-pipeline.png)
-
-Click on the `Continue` button. This will load the Azure YAML pipeline from GitHub. On the next page, you can click the `Run` button to create and manually trigger the pipeline for the first time:
-
-![Run Azure Pipeline](assets/run-pipeline.png)
 
 - 
 https://portal.azure.com/?quickstart=true#blade/Microsoft_Azure_Resources/QuickstartCenterBlade
