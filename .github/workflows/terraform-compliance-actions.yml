@@ -27,7 +27,7 @@ jobs:
         # Check for formatting
         - name: Terraform Formatting Validation
           run: |
-              terraform fmt -check -no-color | tee fmt.log
+              terraform fmt -check -diff -no-color | tee fmt.log
               REPORT="$(cat fmt.log)"
               REPORT="${REPORT//'%'/'%25'}"
               REPORT="${REPORT//$'\n'/'%0A'}"
