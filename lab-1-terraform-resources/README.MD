@@ -120,7 +120,8 @@ mkdir -p .github/workflows
 
 ```shell
 cd lab-1-terraform-resources/workflows
-cp *.yml ~/mcgill-devops-spring-2022/.github/workflows
+cp resource-group-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
+cd ~/mcgill-devops-spring-2022
 ```
 
 Configure your git client
@@ -135,7 +136,7 @@ Commit your new changes to the Github Repository:
 
 ```
 git add ~/mcgill-devops-spring-2022/.github/workflows/*
-git commit -m "Adding GitHub Actions Workflow for Compliance and Security"
+git commit -m "Adding GitHub Actions Workflow for Resource Group Compliance and Security"
 git push -u origin main
 ```
 
@@ -169,8 +170,7 @@ Inspect the stages of your CI pipeline, what errors do you see?
 Add in the required tags to your Azure Resource Group manifest in `main.tf`
 
 
-
-```
+```hcl
 resource "azurerm_resource_group" "rg" {
   name     = "rg-devops-tf-${random_uuid.uuid.result}"
   location = var.location
@@ -190,3 +190,115 @@ git push -u origin main
 Inspect your Github Actions CI workflow, review the different stages and the information provided by the workflows. What do you notice?
 
 Inspect the resources available in your [Azure portal](https://portal.azure.com/#blade/HubsExtension/BrowseResourceGroups) - do you have a new Resource Group? What else was created?
+
+
+## More Resource Creation
+
+Create an Azure Kubernetes Cluster using your GitHub actions CI Pipeline
+
+## Create a New CI Pipeline
+
+Copy the `aks-actions.yml` workflow file to your `.github/workflows` directory:
+
+
+```shell
+cd lab-1-terraform-resources/workflows
+cp aks-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
+cd ~/mcgill-devops-spring-2022
+```
+
+Commit your new changes to the Github Repository:
+
+```
+git add ~/mcgill-devops-spring-2022/.github/workflows/*
+git commit -m "Adding GitHub Actions Workflow for AKS Cluster Compliance and Security"
+git push -u origin main
+```
+
+Inspect your new Github Actions in the Github web UI
+
+## Creating Azure Kubernetes Service Resource
+
+
+Now that your repository is setup to perform Static Code analysis and Compliance checks, test out the new  Actions workflow by updating the `backend.tf` file in the `aks-cluster` directory:
+
+Update the following key-value pairs, with the Azure Resource group, Storage account and Storage Account container values you created previously: 
+
+```shell
+    resource_group_name  = "github-actions-tfstate"
+    storage_account_name = "githubactionstfstate"
+    container_name       = "tfstatedevops"
+    key                  = "akscluster.tfstate"
+```
+
+Commit your changes to GitHub!
+
+```
+git add lab-1-terraform-resources/terraform/aks-cluster/backend.tf
+git commit -m "Configuring Terraform backend for Azure Kubernetes Service"
+git push -u origin main
+```
+
+Inspect the stages of your CI pipeline, what errors do you see?
+
+## Correcting Validation Errors
+
+Correct the value for the required tags to your AKS Cluster manifest in `main.tf`
+
+>**Hint** The list of accepted values will be displayed in the GitHub actions output.
+
+```
+git add lab-1-terraform-resources/terraform/aks-cluster/main.tf
+git commit -m "Adding Environment Tag for Compliance Checks"
+git push -u origin main
+```
+
+Inspect your Github Actions CI workflow, review the different stages and the information provided by the workflows. What do you notice?
+
+
+## Cleaning Up
+
+Once you are satisfied with your environments and finished exploring, you can clean up all the created resources by modifying the github Actions workflow to add a new step:
+
+Add the code snippet below to the bottom of the `aks-actions.yml` in your `.github/workflows` directory
+
+```yaml
+  terraform-destroy:
+      name: Terraform Resource removal
+      needs: terraform-apply
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: lab-1-terraform-resources/terraform/aks-cluster
+      env:
+        ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      steps:
+        - name: 'Checkout'
+          uses: actions/checkout@master
+        - uses: hashicorp/setup-terraform@v1
+        # Check for formatting
+        - name: Initializing Terraform
+          id: init
+          run:  terraform init
+        - name: Validating Plan 
+          id: plan
+          run:  terraform plan
+        - name: Destroying  Resources  
+          id: apply
+          run:  terraform apply -destroy -auto-approve
+```
+
+Commit your new changes to the Github Repository:
+
+```
+git add ~/mcgill-devops-spring-2022/.github/workflows/*
+git commit -m "Adding Terraform Destroy stage to GitHub Actions Workflow for AKS Cluster Compliance and Security"
+git push -u origin main
+```
+
+Modify any of your `aks-cluster` terraform files to add a new line ( this will trigger the workflow) and commit the changes.
+
+>**Hint** Use `git status` to see the full name and path of the files you changed for your `git add` and `git commit` commands
