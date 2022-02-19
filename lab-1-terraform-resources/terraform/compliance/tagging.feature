@@ -13,7 +13,4 @@ Scenario Outline: Ensure that specific tags are defined
 
     Examples:
       | tags        | value              |
-      | Creator     | .+                 |
-      | Application | .+                 |
-      | Role        | .+                 |
       | Environment | ^(prod\|uat\|dev)$ |

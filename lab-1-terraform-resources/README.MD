@@ -161,3 +161,28 @@ git add lab-1-terraform-resources/terraform/resource-group/backend.tf
 git commit -m "Configuring Terraform backend for Azure Resource Group"
 git push -u origin main
 ```
+
+Inspect the stages of your CI pipeline, what errors do you see?
+
+## Correcting Validation Errors
+
+Add in the required tags to your Azure Resource Group manifest in `main.tf`
+
+
+
+```
+resource "azurerm_resource_group" "rg" {
+  name     = "rg-devops-tf-${random_uuid.uuid.result}"
+  location = var.location
+
+  tags = {
+    environment = "dev"
+  }
+}
+```
+
+```
+git add lab-1-terraform-resources/terraform/resource-group/main.tf
+git commit -m "Adding Environment Tag for Compliance Checks"
+git push -u origin main
+```
