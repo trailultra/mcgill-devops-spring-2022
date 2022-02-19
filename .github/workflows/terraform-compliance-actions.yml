@@ -19,8 +19,6 @@ jobs:
         - name: 'Checkout'
           uses: actions/checkout@master
         - uses: hashicorp/setup-terraform@v1
-          with:
-            terraform_version: 0.14.x
         # Check for formatting
         - name: Terraform Formatting Validation
           run: |
