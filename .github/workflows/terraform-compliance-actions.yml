@@ -31,15 +31,12 @@ jobs:
               REPORT="${REPORT//$'\r'/'%0D'}"
               echo "::set-output name=logfmt::$REPORT"
           continue-on-error: true
-        - name: Terraform Initialization
-          id: init
-          run: terraform init
-        - name: Generate Terraform PLan
-          id: plan
-          run: |
-            terraform init && terraform plan -out=plan.out
-        - name: Check Plan for Compliance Violations
-          uses: terraform-compliance/github_action@main
-          with:
-            plan: plan.out
-            features: lab-1-terraform-resources/terraform/compliance
+      - name: Generate Terraform Plan
+        id: plan
+        run: |
+          terraform init && terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json 
+      - name: Check Plan for Compliance
+        uses: terraform-compliance/github_action@main
+        with:
+          plan: plan.out.json
+          features: lab-1-terraform-resources/terraform/compliance
