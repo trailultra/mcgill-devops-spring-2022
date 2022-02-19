@@ -1,4 +1,4 @@
-name: Terraform CI Compliance Checks
+name: Terraform CI with Compliance Checks
 on:
   push:
     paths:
