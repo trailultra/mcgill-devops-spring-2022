@@ -110,7 +110,7 @@ In the "Settings" page of your GitHub repository, select the "Secrets" section a
 
 ## Creating your GitHub Workflows
 
-From Azure Cloud Shell, in the `lab-1-terraform-resources/workflows` directory of the repository you cloned there are two Action definition files. In order to integrate them into your repository, create a new directory `.github/workflows` and copy the files to it
+From Azure Cloud Shell, in the `lab-1-terraform-resources/workflows` directory of the repository you cloned there is an Action definition files. In order to integrate them into your repository, create a new directory `.github/workflows` and copy the files to it
 
 ```shell
 cd ~/mcgill-devops-spring-2022
@@ -135,9 +135,29 @@ Commit your new changes to the Github Repository:
 
 ```
 git add /home/jenn/mcgill-devops-spring-2022/.github/workflows/*
-git commit -m "Adding GitHub Actions Workflows for Compliance and Security"
+git commit -m "Adding GitHub Actions Workflow for Compliance and Security"
 git push -u origin main
 ```
 
 Inspect your new Github Actions in the Github web UI
 
+## Creating Azure Resources
+
+Now that your repository is setup to for Static Code analysis and Compliance checks, test out the Actions workflow by updating the `backend.tf` file in the `resource-group` directory:
+
+Update the following key-value pairs, with the Azure Resource group, Storage account and Storage Account container values you created in the previous steps: 
+
+```shell
+    resource_group_name  = "github-actions-tfstate"
+    storage_account_name = "githubactionstfstate"
+    container_name       = "tfstatedevops"
+    key                  = "resourcegroup.tfstate"
+```
+
+Commit your changes to GitHub!
+
+```
+git add lab-1-terraform-resources/terraform/resource-group/backend.tf
+git commit -m "Configuring Terraform backend for Azure Resource Group"
+git push -u origin main
+```
