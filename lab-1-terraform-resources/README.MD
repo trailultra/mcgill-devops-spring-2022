@@ -186,3 +186,7 @@ git add lab-1-terraform-resources/terraform/resource-group/main.tf
 git commit -m "Adding Environment Tag for Compliance Checks"
 git push -u origin main
 ```
+
+Inspect your Github Actions CI workflow, review the different stages and the information provided by the workflows. What do you notice?
+
+Inspect the resources available in your [Azure portal](https://portal.azure.com/#blade/HubsExtension/BrowseResourceGroups) - do you have a new Resource Group? What else was created?
