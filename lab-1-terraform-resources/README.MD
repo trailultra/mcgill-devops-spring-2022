@@ -22,7 +22,7 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
         You will have the option of using a PowerShell or a Bash (Linux) environment to run all subsequent sections of the lab. Select the environment you're most comfortable with.
 
 - [ ] Create an Azure Service Principal to use with GitHub and Terraform
-        
+        az account show --query id --output tsv
         az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
        
 - [ ] Create an SSH Key to securely access your GitHub Repos:
