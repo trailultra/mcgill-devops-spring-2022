@@ -6,3 +6,4 @@ terraform {
     key                  = "resourcegroup.tfstate"
   }
 }
+
