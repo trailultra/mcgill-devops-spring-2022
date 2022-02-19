@@ -82,6 +82,6 @@ jobs:
         - name: Validating Plan 
           id: plan
           run:  terraform plan
-       - name: Creating Resources  
+        - name: Creating Resources  
           id: apply
           run:  terraform apply -auto-approve
