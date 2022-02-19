@@ -21,7 +21,6 @@ jobs:
         - uses: hashicorp/setup-terraform@v1
           with:
             terraform_version: 0.14.x
-        - uses: terraform-compliance/github_action@main
         # Check for formatting
         - name: Terraform Formatting Validation
           run: |
