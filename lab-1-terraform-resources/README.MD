@@ -80,7 +80,7 @@ Additionally, because state files can contain sensitive information, access to i
 az storage account create -n githubactionstfstate -g github-actions-tfstate -l eastus2 --sku Standard_LRS
  
 # Create Storage Account Container
-az storage container create -n tfstatedevops 
+az storage container create -n tfstatedevops  --account-name githubactionstfstate
 ```
 
 In order to create resources programatically, Terraform must authenticate to Azure. Best practices for Terraform indicate that authentication should be done via Service Principal, instead of User accounts.
