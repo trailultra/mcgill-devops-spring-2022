@@ -1,11 +1,6 @@
 # DevOps Concepts for Leaders - McGill
 
 
-## Purpose
-
-
-
-## Before you start
 
 This set of exercises uses GitHub, GitHub Actions, and the Azure Portal.
 
