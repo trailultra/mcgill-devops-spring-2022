@@ -6,3 +6,8 @@ resource "azurerm_resource_group" "rg" {
 
 
 }
+provider "azurerm" {
+  # Configuration options
+  features {}
+
+}
