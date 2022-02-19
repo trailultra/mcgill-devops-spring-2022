@@ -75,6 +75,8 @@ Additionally, because state files can contain sensitive information, access to i
 
 
 ```shell
+# Create your unique name for Azure storage (this is a bash example). Replace <Your prefix> with your choice
+export AZ_STORAGE=<Your prefix>githubactionstfstate
 
 # Create Storage Account
 az storage account create -n githubactionstfstate -g github-actions-tfstate -l eastus2 --sku Standard_LRS
@@ -154,7 +156,7 @@ Update the following key-value pairs, with the Azure Resource group, Storage acc
 
 ```shell
     resource_group_name  = "github-actions-tfstate"
-    storage_account_name = "githubactionstfstate"
+    storage_account_name = "<Your prefix>githubactionstfstate"
     container_name       = "tfstatedevops"
     key                  = "resourcegroup.tfstate"
 ```
