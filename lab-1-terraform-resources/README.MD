@@ -154,6 +154,10 @@ Update the following key-value pairs, with the Azure Resource group, Storage acc
     container_name       = "tfstatedevops"
     key                  = "resourcegroup.tfstate"
 ```
+>**Hint:** You can open an Editor window from Shell by clicking the `{}` button at the top of your cloud shell window
+
+![Code Editor Button](../assets/lab-1/code-editor.png)
+
 
 Commit your changes to GitHub!
 
