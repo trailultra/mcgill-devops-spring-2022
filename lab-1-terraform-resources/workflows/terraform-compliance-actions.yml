@@ -1,4 +1,4 @@
-name: Terraform Compliance Checks
+name: Terraform CI Compliance Checks
 on:
   push:
     paths:
@@ -61,6 +61,7 @@ jobs:
             plan: lab-1-terraform-resources/terraform/resource-group/plan.out
             features: lab-1-terraform-resources/terraform/compliance/
   terraform-apply:
+      name: Terraform Resource Creation
       needs: compliance-test
       runs-on: ubuntu-latest
       defaults:
@@ -82,6 +83,6 @@ jobs:
         - name: Validating Plan 
           id: plan
           run:  terraform plan
-       - name: Creating Resources  
+        - name: Creating Resources  
           id: apply
           run:  terraform apply -auto-approve
