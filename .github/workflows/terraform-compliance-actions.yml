@@ -38,9 +38,9 @@ jobs:
         - name: Generate Terraform PLan
           id: plan
           run: |
-            terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
+            terraform plan -out=plan.out 
         - name: Check Plan for Compliance Violations
           uses: terraform-compliance/github_action@main
           with:
-            plan: plan.out.json
+            plan: plan.out
             features: lab-1-terraform-resources/terraform/compliance
