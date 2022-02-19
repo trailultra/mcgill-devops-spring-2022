@@ -87,8 +87,10 @@ In order to create resources programatically, Terraform must authenticate to Azu
 Create a service principal that will be used by Terraform to authenticate to Azure (Note down password)
 
 ```shell
+#Getting Your Subscription Information
+az account show --query id --output tsv
 
-az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_INFO>"
 ```
 >**Note:** Make a note of the credential information that is provided after running this step, it is needed in subsequent stages
 
