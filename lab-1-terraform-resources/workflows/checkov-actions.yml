@@ -2,7 +2,7 @@ name: Terraform Security Checks
 on:
   push:
     paths:
-    - "lab-1-terraform-resources/terraform/resource-group/"
+    - lab-1-terraform-resources/terraform
 jobs:
   checkov-job:
     runs-on: ubuntu-latest
