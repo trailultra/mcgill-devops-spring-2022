@@ -28,4 +28,4 @@ jobs:
           uses: terraform-compliance/github_action@main
           with:
             plan: lab-1-terraform-resources/terraform/resource-group/plan.out.json
-            features: lab-1-terraform-resources/terraform/complaince/
+            features: lab-1-terraform-resources/terraform/compliance/
