@@ -28,4 +28,4 @@ jobs:
           uses: terraform-compliance/github_action@main
           with:
             plan: lab-1-terraform-resources/terraform/resource-group/plan.out.json
-            features: ssh://git@github.com/terraform-compliance/user-friendly-features.git
+            features: lab-1-terraform-resources/terraform/complaince/
