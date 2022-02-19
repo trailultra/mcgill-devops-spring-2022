@@ -22,8 +22,9 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
         You will have the option of using a PowerShell or a Bash (Linux) environment to run all subsequent sections of the lab. Select the environment you're most comfortable with.
 
 - [ ] Create an Azure Service Principal to use with GitHub and Terraform
+        
         az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
-- [ ]         
+       
 - [ ] Create an SSH Key to securely access your GitHub Repos:
     PowerShell:
 
@@ -51,7 +52,7 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
 
 In this lab we will be using Terraform and Github Actions to create Azure resources. GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that build and test every pull request to your repository, or deploy merged pull requests to production.
 
-We will define 2 types of GitHub Actions, that will check for Security Compliance against standardized baselines using [Checkov](https://www.checkov.io/) and for custom Code Compliance standards with [Terraform Compliance](https://terraform-compliance.com/)
+We will define 2 types of GitHub Actions, that will check for Security Compliance against standardized baselines using [Checkov](https://www.checkov.io/) and for custom Code Compliance standards with [Terraform Compliance](https://terraform-compliance.com/) 
 
 We will also use the HashiCorp Terraform Github Actions plugins to deploy Azure resources if our Security and Code compliance checks pass
 
@@ -125,7 +126,6 @@ cp *.yml ~/mcgill-devops-spring-2022/.github/workflows
 Configure your git client
 
 ```shell
-
   git config --global user.email "you@example.com"
   git config --global user.name "Your Name"
 ```
@@ -134,7 +134,7 @@ Configure your git client
 Commit your new changes to the Github Repository:
 
 ```
-git add /home/jenn/mcgill-devops-spring-2022/.github/workflows/*
+git add ~/mcgill-devops-spring-2022/.github/workflows/*
 git commit -m "Adding GitHub Actions Workflow for Compliance and Security"
 git push -u origin main
 ```
