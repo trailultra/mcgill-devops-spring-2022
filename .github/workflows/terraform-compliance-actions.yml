@@ -2,12 +2,12 @@ name: Terraform Compliance Checks
 on:
   push:
     paths:
-      - 'lab-1-terraform-resources/terraform/**'
-defaults:
-  run:
-    working-directory: lab-1-terraform-resources/terraform/resource-group
+      - 'lab-1-terraform-resources/terraform/resource-group/**'
 jobs:
-    test:
+    compliance-test:
+      defaults:
+        run:
+          working-directory: lab-1-terraform-resources/terraform/resource-group
       runs-on: ubuntu-latest
       name: Terraform Compliance Testing
       env:
@@ -16,15 +16,15 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
     steps:
-      - name: 'Checkout'
+      - name: 'Checkout Repository'
         uses: actions/checkout@master
       - uses: hashicorp/setup-terraform@v1
         # Check for formatting
-      - name: terraform plan
+      - name: Generating Terraform Plan
         id: plan
         run: |
           terraform init && terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
-      - name: terraform-compliance
+      - name: Checking Plan for Compliance
         uses: terraform-compliance/github_action@main
         with:
           plan: plan.out.json
