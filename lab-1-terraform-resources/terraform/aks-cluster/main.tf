@@ -3,7 +3,7 @@ resource "random_pet" "prefix" {}
 
 resource "azurerm_resource_group" "default" {
   name     = "${random_pet.prefix.id}-rg"
-  location = "Canada Central"
+  location = var.location
 
   tags = {
     environment = "Demo"
