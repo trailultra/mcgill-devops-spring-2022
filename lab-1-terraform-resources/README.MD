@@ -85,10 +85,10 @@ Additionally, because state files can contain sensitive information, access to i
 ```shell
 # Create your unique name for Azure storage (this is a bash example). Replace <Your prefix> with your choice
 #bash
-export STORAGE_ACCOUNT=githubactionstfstate<initials>
+export STORAGE_ACCOUNT="githubactionstfstate<initials>"
 
 #PowerShell
-$env:STORAGE_ACCOUNT=githubactionstfstate<initials>
+$env:STORAGE_ACCOUNT="githubactionstfstate<initials>"
 ```
 
 # Create Storage Account
@@ -110,10 +110,13 @@ Create a service principal that will be used by Terraform to authenticate to Azu
 
 ```shell
 #Getting Your Subscription Information
+#BASH
+export SUBSCRIPTION_ID=$(az account show --query id --output tsv)
 
-az account show --query id --output tsv
-
-az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_INFO>"
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRITPION_ID}"
+#PowerShell
+$env:SUBSCRIPTION_ID=(az account show --query id --output tsv
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/$env:SUBSCRIPTION_ID"
 ```
 >**Note:** Make a note of the credential information that is provided after running this step, it is needed in subsequent stages
 
