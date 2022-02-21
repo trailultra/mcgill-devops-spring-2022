@@ -169,8 +169,6 @@ git commit -m "Adding GitHub Actions Workflow for Resource Group Compliance and 
 git push -u origin main
 ```
 
-Inspect your new Github Actions in the Github web UI
-
 ## Creating Azure Resources
 
 Now that your repository is setup to for Static Code analysis and Compliance checks, test out the Actions workflow by updating the `backend.tf` file in the `resource-group` directory:
