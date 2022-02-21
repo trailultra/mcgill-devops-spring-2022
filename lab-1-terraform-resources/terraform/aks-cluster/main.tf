@@ -17,6 +17,7 @@ resource "azurerm_kubernetes_cluster" "default" {
   dns_prefix          = "${random_pet.prefix.id}-k8s"
   identity {
       type = "SystemAssigned"
+	}
   default_node_pool {
     name            = "default"
     node_count      = 2
