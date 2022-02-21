@@ -76,13 +76,24 @@ Additionally, because state files can contain sensitive information, access to i
 
 ```shell
 # Create your unique name for Azure storage (this is a bash example). Replace <Your prefix> with your choice
-export AZ_STORAGE=<Your prefix>githubactionstfstate
+#bash
+export STORAGE_ACCOUNT=githubactionstfstate<initials>
+
+#PowerShell
+$env:STORAGE_ACCOUNT=githubactionstfstate<initials>
+```
 
 # Create Storage Account
-az storage account create -n githubactionstfstate -g github-actions-tfstate -l eastus2 --sku Standard_LRS
- 
-# Create Storage Account Container
-az storage container create -n tfstatedevops  --account-name githubactionstfstate
+```
+#Bash
+az storage account create -n ${STORAGE_ACCOUNT}  -g github-actions-tfstate -l eastus2 --sku Standard_LRS
+az storage container create -n tfstatedevops  --account-name ${STORAGE_ACCOUNT}
+
+#PowerShell
+
+az storage account create -n  $env:STORAGE_ACCOUNT -g github-actions-tfstate -l eastus2 --sku Standard_LRS
+az storage container create -n tfstatedevops  --account-name  $env:STORAGE_ACCOUNT 
+
 ```
 
 In order to create resources programatically, Terraform must authenticate to Azure. Best practices for Terraform indicate that authentication should be done via Service Principal, instead of User accounts.
@@ -91,6 +102,7 @@ Create a service principal that will be used by Terraform to authenticate to Azu
 
 ```shell
 #Getting Your Subscription Information
+
 az account show --query id --output tsv
 
 az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_INFO>"
@@ -109,8 +121,8 @@ In the "Settings" page of your GitHub repository, select the "Secrets" section a
 
 | Name | Value|
 |:-|:-|
-|`AZURE_AD_CLIENT_ID`| The Service principal ID from above|
-|`AZURE_AD_CLIENT_SECRET`| The secret that was created as part of the Azure Service Principal|
+|`AZURE_AD_CLIENT_ID`| The AppID information from the Service principal ID from above|
+|`AZURE_AD_CLIENT_SECRET`| The Password that was created as part of the Azure Service Principal|
 |`AZURE_AD_TENANT_ID`| The Azure AD tenant ID to where the service principal was created|
 |`AZURE_SUBSCRIPTION_ID`| Subscription ID of where you want to deploy the Terraform|
 
@@ -156,7 +168,7 @@ Update the following key-value pairs, with the Azure Resource group, Storage acc
 
 ```shell
     resource_group_name  = "github-actions-tfstate"
-    storage_account_name = "<Your prefix>githubactionstfstate"
+    storage_account_name = ""  ## Use the Storage Account name you set above
     container_name       = "tfstatedevops"
     key                  = "resourcegroup.tfstate"
 ```
@@ -236,7 +248,7 @@ Update the following key-value pairs, with the Azure Resource group, Storage acc
 
 ```shell
     resource_group_name  = "github-actions-tfstate"
-    storage_account_name = "githubactionstfstate"
+    storage_account_name = ""  ## Use the Storage Account name you set above
     container_name       = "tfstatedevops"
     key                  = "akscluster.tfstate"
 ```
