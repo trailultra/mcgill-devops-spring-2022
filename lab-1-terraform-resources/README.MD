@@ -7,6 +7,14 @@ In this exercise, you will practice using the core components of terraform inclu
 
 Create a multi-stage GitHub Action to deploy Azure-based resources that include integration and compliance testing of IaC objects as well as a manual approval stage prior to resource deployment
 
+## Tools Used
+
+- [Checkov](https://www.checkov.io/) - Static Code Analysis
+- [Terraform Compliance](https://terraform-compliance.com/) - security and compliance focused test framework
+- [GitHub Actions](https://github.com/features/actions) - Continuous Integration and Continuous Delivery
+- [Azure Portal](https://portal.azure.com/) - Cloud Infrastructure
+
+
 ## Environment Setup
 
 All steps in this lab exercise should be completed using the Azure Cloud Shell environment. All required tools including the Azure CLI, HashiCorp Terraform and the git CLI come pre-installed in this Cloud Shell Environment
