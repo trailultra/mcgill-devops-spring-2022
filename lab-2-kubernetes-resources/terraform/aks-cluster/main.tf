@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "default" {
   location = var.location
 
   tags = {
-    environment = "Demo"
+    environment = "dev"
   }
 }
 
@@ -31,6 +31,6 @@ resource "azurerm_kubernetes_cluster" "default" {
   }
 
   tags = {
-    environment = "Demo"
+    environment = "dev"
   }
 }
