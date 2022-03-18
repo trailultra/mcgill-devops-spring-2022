@@ -55,7 +55,7 @@ jobs:
       # Logs in with your Azure credentials
       - uses: azure/aks-set-context@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           cluster-name: ${{ secrets.CLUSTER_NAME }}
           resource-group: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
 

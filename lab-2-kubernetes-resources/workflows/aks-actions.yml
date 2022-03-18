@@ -2,13 +2,13 @@ name: Terraform CI Compliance Checks
 on:
   push:
     paths:
-      - 'lab-2-terraform-resources/terraform/aks-cluster/**'
+      - 'lab-2-kubernetes-resources/terraform/aks-cluster/**'
 jobs:
   checkov-job:
     name: Terraform Security Scanning with Checkov
     defaults:
       run:
-        working-directory: lab-2-terraform-resources/terraform/aks-cluster
+        working-directory: lab-2-kubernetes-resources/terraform/aks-cluster
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -29,7 +29,7 @@ jobs:
       runs-on: ubuntu-latest
       defaults:
         run:
-          working-directory: lab-2-terraform-resources/terraform/aks-cluster
+          working-directory: lab-2-kubernetes-resources/terraform/aks-cluster
       env:
         ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
@@ -58,8 +58,8 @@ jobs:
         - name: Checking Plan for Compliance
           uses: terraform-compliance/github_action@main
           with:
-            plan: lab-2-terraform-resources/terraform/aks-cluster/plan.out
-            features: lab-2-terraform-resources/terraform/compliance/
+            plan: lab-2-kubernetes-resources/terraform/aks-cluster/plan.out
+            features: lab-2-kubernetes-resources/terraform/compliance/
   terraform-apply:
       name: Terraform Resource Creation
       needs: compliance-test

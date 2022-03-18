@@ -17,7 +17,7 @@ jobs:
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
-          directory: lab-2-kubernetes-resources/terraform/aks-cluster
+          directory: lab-2-terraform-resources/terraform/aks-cluster
           soft_fail: true 
           framework: terraform
           output_format: github_failed_only
@@ -66,7 +66,7 @@ jobs:
       runs-on: ubuntu-latest
       defaults:
         run:
-          working-directory: lab-2-kubernetes-resources/terraform/aks-cluster
+          working-directory: lab-2-terraform-resources/terraform/aks-cluster
       env:
         ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
