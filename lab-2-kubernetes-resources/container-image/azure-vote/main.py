@@ -12,17 +12,17 @@ app = Flask(__name__)
 if ("OPTION1" in os.environ and os.environ['OPTION1']):
     button1 = os.environ['OPTION1']
 else:
-    button1 = "Demo Value 1"
+    button1 = "Vote Value 1"
 
 if ("OPTION2" in os.environ and os.environ['OPTION2']):
     button2 = os.environ['OPTION2']
 else:
-    button2 = "Demo Value 2"
+    button2 = "Vote Value 2"
 
 if ("TITLE" in os.environ and os.environ['TITLE']):
     title = os.environ['TITLE']
 else:
-    title = "Demo Value 3"
+    title = "Vote Value 3"
 
 # Redis configurations
 redis_server = os.environ['REDIS']
