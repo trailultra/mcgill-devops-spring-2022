@@ -5,7 +5,6 @@ import redis
 import socket
 import sys
 
-
 app = Flask(__name__)
 
 
