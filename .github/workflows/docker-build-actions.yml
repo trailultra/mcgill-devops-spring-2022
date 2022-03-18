@@ -62,8 +62,8 @@ jobs:
       - name: Get K8s context
         uses: azure/aks-set-context@v2.0
         with:
-          resource-group: ${{ secret.RESOURCE_GROUP }}
-          cluster-name: ${{ secret.CLUSTER_NAME }}
+          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.CLUSTER_NAME }}
 
       # Runs Helm to create manifest files
       - name: Bake deployment
