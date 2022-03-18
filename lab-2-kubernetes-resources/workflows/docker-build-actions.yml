@@ -8,6 +8,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  RESOURCE_GROUP: intense-gazelle-rg
+  CLUSTER_NAME: intense-gazelle-aks
 
 jobs:
   build-and-push-image:
@@ -59,8 +61,8 @@ jobs:
       - name: Get K8s context
         uses: azure/aks-set-context@v2.0
         with:
-          resource-group: ${{ secret.RESOURCE_GROUP }}
-          cluster-name: ${{ secret.CLUSTER_NAME }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
 
       # Runs Helm to create manifest files
       - name: Bake deployment

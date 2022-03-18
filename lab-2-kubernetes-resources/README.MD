@@ -1,17 +1,21 @@
-# Creating and Managing Cloud Resources with Terraform
+# Creating and Managing Kubernetes Deployments
 
-In this exercise, you will practice using the core components of terraform including providers, modules and resources to create and manage the lifecycle of cloud based resources.
+In this exercise, you will practice creating and deploying a web-based application to Azure Kubernetes Service(AKS)
 
 
 ## Exercise objectives
 
-Create a multi-stage GitHub Action to deploy Azure-based resources that include integration and compliance testing of IaC objects as well as a manual approval stage prior to resource deployment
+Create a multi-stage GitHub Action to deploy AKS resources that include integration and compliance testing of IaC objects.
+Create a multi-stage Github Action to build and deploy a containerized web-based application to your AKS Cluster
 
 ## Tools Used
 
+- [Docker]
 - [Checkov](https://www.checkov.io/) - Static Code Analysis
 - [Terraform Compliance](https://terraform-compliance.com/) - security and compliance focused test framework
 - [GitHub Actions](https://github.com/features/actions) - Continuous Integration and Continuous Delivery
+- [GitHub Container Registry]
+- [Helm]
 - [Azure Portal](https://portal.azure.com/) - Cloud Infrastructure
 
 
@@ -25,38 +29,10 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
         
         ![Azure Cloud Shell](../assets/lab-1/shell-icon.png)
 
-        Select your "Free Trial" Subscription to create a storage account for your Cloud Shell and click "Create Storage"
-
         You will have the option of using a PowerShell or a Bash (Linux) environment to run all subsequent sections of the lab. Select the environment you're most comfortable with.
 
-- [ ] Create an Azure Service Principal to use with GitHub and Terraform
-
-            az account show --query id --output tsv
-            az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>"
+- [ ] 
        
-- [ ] Create an SSH Key to securely access your GitHub Repos:
-    PowerShell:
-
-    ![PowerShell SSH Key](../assets/lab-1/powershell-ssh.png)
-    
-    Bash: 
-
-    ![BASH SSH Key](../assets/lab-1/bash-ssh.png)
-
-    **Do not enter a passphrase when prompted, simply hit return twice**  
-    
-    Add your [SSH Public Key to your GitHub Repository](https://github.com/settings/keys) by selecting "New SSH Key" and entering the contents of the `id_rsa.pub` file found in the `.ssh` directory of your Cloud Shell environment
-    
-    You can retrieve the contents of the public key in both PowerShell and Bash with : 
-
-        cat .ssh/id_rsa.pub
-
-- [ ] Clone your GitHub repository to your Cloud Shell environment:
-
-    ```git clone git@github.com:<USERNAME>/mcgill-devops-spring-2022```
-     > **Hint:** You can get your GitHub repository URL from the CODE button drop down on the repository main page
-
-
 # Creating GitHub Action Workflows for Terraform 
 
 In this lab we will be using Terraform and Github Actions to create Azure resources. GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that build and test every pull request to your repository, or deploy merged pull requests to production.
@@ -66,43 +42,6 @@ We will define 2 types of GitHub Actions, that will check for Security Complianc
 We will also use the HashiCorp Terraform Github Actions plugins to deploy Azure resources if our Security and Code compliance checks pass
 
 ## Preparing Azure resources for Terraform
-
-Terraform must store state about your managed infrastructure and configuration. This state is used by Terraform to map real world resources to your configuration, keep track of metadata, and to improve performance for large infrastructures.
-
-Terraform best practices recommend using remote state, or storing your terraform state information in a remote location instead of in a local file. 
-
-This is configured by creating a `backend` definition in your terraform manifests. Backends are initialized before any other part of terraform, and cannot contain variables.
-
-Create a resource group in Azure, using the `az` CLI to hold your terraform remote state:
-
-```shell
-az group create -n github-actions-tfstate -l eastus2
-```
-
-Additionally, because state files can contain sensitive information, access to it should be tightly controlled. Create an Azure Storage Account and Storage Account Container to host your terraform state file:
-
-
-```shell
-# Create your unique name for Azure storage (this is a bash example). Replace <Your prefix> with your choice
-#bash
-export STORAGE_ACCOUNT="githubactionstfstate<initials>"
-
-#PowerShell
-$env:STORAGE_ACCOUNT="githubactionstfstate<initials>"
-```
-
-# Create Storage Account
-```
-#Bash
-az storage account create -n ${STORAGE_ACCOUNT}  -g github-actions-tfstate -l eastus2 --sku Standard_LRS
-az storage container create -n tfstatedevops  --account-name ${STORAGE_ACCOUNT}
-
-#PowerShell
-
-az storage account create -n  $env:STORAGE_ACCOUNT -g github-actions-tfstate -l eastus2 --sku Standard_LRS
-az storage container create -n tfstatedevops  --account-name  $env:STORAGE_ACCOUNT 
-
-```
 
 In order to create resources programatically, Terraform must authenticate to Azure. Best practices for Terraform indicate that authentication should be done via Service Principal, instead of User accounts.
 
@@ -127,45 +66,31 @@ In order for our Terraform GitHub actions to create resources in Azure, we must 
 ![GitHub Secrets](../assets/lab-1/github-secrets.png)
 
 
-In the "Settings" page of your GitHub repository, select the "Secrets" section and create four new Repository Secrets for the following required secrets:
+In the "Settings" page of your GitHub repository, select the "Secrets" section and create a new Repository Secret for the following required secret:
 
 
 | Name | Value|
 |:-|:-|
-|`AZURE_AD_CLIENT_ID`| The AppID information from the Service principal ID from above|
-|`AZURE_AD_CLIENT_SECRET`| The Password that was created as part of the Azure Service Principal|
-|`AZURE_AD_TENANT_ID`| The Azure AD tenant ID to where the service principal was created|
-|`AZURE_SUBSCRIPTION_ID`| Subscription ID of where you want to deploy the Terraform|
+|`AZURE_CREDENTIALS`| The AppID information from the Service principal ID from above|
 
 
 ## Creating your GitHub Workflows
 
-From Azure Cloud Shell, in the `lab-1-terraform-resources/workflows` directory of the repository you cloned there is an Action definition files. In order to integrate them into your repository, create a new directory `.github/workflows` and copy the files to it
+From Azure Cloud Shell, in the `lab-2-terraform-resources/workflows` directory of the repository you cloned there is are 2 GitHub Action definition files. In order to integrate them into your repository, copy the files to your existing `.github/workflows/` directory
 
 ```shell
 cd ~/mcgill-devops-spring-2022
-mkdir -p .github/workflows
 ```
 
 ```shell
-cd lab-1-terraform-resources/workflows
-cp resource-group-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
-cd ~/mcgill-devops-spring-2022
+cp lab-2-kubernetes-resources/workflows/resource-group-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
 ```
-
-Configure your git client
-
-```shell
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
-```
-**Note:** Replace "you@example.com" with the email address associated with your Github Account, and "Your Name" with your name
 
 Commit your new changes to the Github Repository:
 
 ```
 git add ~/mcgill-devops-spring-2022/.github/workflows/*
-git commit -m "Adding GitHub Actions Workflow for Resource Group Compliance and Security"
+git commit -m "Adding GitHub Actions Workflow for "
 git push -u origin main
 ```
 
@@ -196,27 +121,6 @@ git push -u origin main
 
 Inspect the stages of your CI pipeline, what errors do you see?
 
-## Correcting Validation Errors
-
-Add in the required tags to your Azure Resource Group manifest in `main.tf`
-
-
-```hcl
-resource "azurerm_resource_group" "rg" {
-  name     = "rg-devops-tf-${random_uuid.uuid.result}"
-  location = var.location
-
-  tags = {
-    environment = "dev"
-  }
-}
-```
-
-```
-git add lab-1-terraform-resources/terraform/resource-group/main.tf
-git commit -m "Adding Environment Tag for Compliance Checks"
-git push -u origin main
-```
 
 Inspect your Github Actions CI workflow, review the different stages and the information provided by the workflows. What do you notice?
 
