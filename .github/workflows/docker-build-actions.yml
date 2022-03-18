@@ -3,7 +3,7 @@ name: Create and publish a Docker image
 on:
   push:
     paths:
-      - 'lab-2-terraform-resources/container-image/'
+      - 'lab-2-kubernetes-resources/container-image/'
 
 env:
   REGISTRY: ghcr.io
