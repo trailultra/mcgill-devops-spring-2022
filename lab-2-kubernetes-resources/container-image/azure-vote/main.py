@@ -6,7 +6,6 @@ import socket
 import sys
 
 app = Flask(__name__)
-
 # Load configurations from environment or config file
 
 if ("OPTION1" in os.environ and os.environ['OPTION1']):
