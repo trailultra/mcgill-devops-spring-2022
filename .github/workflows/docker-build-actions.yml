@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'lab-2-kubernetes-resources/container-image/**'
+      - 'lab-2-kubernetes-resources/helm-charts/**'
       
 
 env:
