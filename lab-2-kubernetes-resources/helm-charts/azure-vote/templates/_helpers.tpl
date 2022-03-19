@@ -54,9 +54,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "azure-vote.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "azure-vote.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.frontend.serviceAccount.create }}
+{{- default (include "azure-vote.fullname" .) .Values.frontend.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" .Values.frontend.serviceAccount.name }}
 {{- end }}
 {{- end }}
