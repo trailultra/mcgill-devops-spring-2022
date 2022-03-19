@@ -1,9 +1,9 @@
 terraform {
   backend "azurerm" {
     resource_group_name  = "github-actions-tfstate"
-    storage_account_name = "githubactionstfstate"
+    storage_account_name = "githubactionstfstaterp"
     container_name       = "tfstatedevops"
-    key                  = "aks"
+    key                  = "lab-2-aks-cluster.tfstate"
   }
 }
 
