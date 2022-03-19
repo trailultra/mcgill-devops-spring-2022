@@ -25,7 +25,7 @@ else:
 if ("TITLE" in os.environ and os.environ['TITLE']):
     title = os.environ['TITLE']
 else:
-    title = "Vote Value 3"
+    title = "My Voting App"
 
 # Redis configurations
 redis_server = os.environ['REDIS']
