@@ -86,3 +86,30 @@ jobs:
         - name: Creating Resources  
           id: apply
           run:  terraform apply -auto-approve
+
+    terraform-destroy:
+      name: Terraform Resource removal
+      needs: terraform-apply
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: lab-2-kubernetes-resources/terraform/aks-cluster
+      env:
+        ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      steps:
+        - name: 'Checkout'
+          uses: actions/checkout@master
+        - uses: hashicorp/setup-terraform@v1
+        # Check for formatting
+        - name: Initializing Terraform
+          id: init
+          run:  terraform init
+        - name: Validating Plan 
+          id: plan
+          run:  terraform plan
+        - name: Destroying  Resources  
+          id: apply
+          run:  terraform apply -destroy -auto-approve

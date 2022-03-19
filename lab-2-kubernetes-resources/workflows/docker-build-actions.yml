@@ -10,8 +10,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  RESOURCE_GROUP: 
-  CLUSTER_NAME: 
+  RESOURCE_GROUP: "mutual-stag-rg"
+  CLUSTER_NAME: "mutual-stag-aks"
   CHART_PATH: "lab-2-kubernetes-resources/helm-charts/azure-vote"
 
 jobs:
