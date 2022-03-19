@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+fullnameOverride: "azure-vote"
 
 redis:
   image:
@@ -25,11 +26,10 @@ frontend:
     port: 80
   env:
     backendName: azure-vote-backend-master
-    voteOption1: Coffee
-    voteOption2: Tea
-    showHostName: '1'
+    voteOption1: "Coffee"
+    voteOption2: "Tea"
+    showHostName: "1"
   imagePullSecrets: []
-  nameOverride: "azure-vote"
 
   podAnnotations: {}
 
