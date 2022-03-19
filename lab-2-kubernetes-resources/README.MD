@@ -35,6 +35,7 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
 In order to get all the new labs and workflow files, you will need to incorporate the changes made in the upstream repository:
 
 ```shell
+cd ~/mcgill-devops-spring-2022
 git remote add upstream git@github.com:jennviau/mcgill-devops-spring-2022.git
 git fetch upstream
 git pull upstream main
