@@ -5,8 +5,8 @@ In this exercise, you will practice creating and deploying a web-based applicati
 
 ## Exercise objectives
 
-Create a multi-stage GitHub Action to deploy AKS resources that include integration and compliance testing of IaC objects.
-Create a multi-stage Github Action to build and deploy a containerized web-based application to your AKS Cluster
+* Create a multi-stage GitHub Action to deploy AKS resources that include integration and compliance testing of IaC objects.
+* Create a multi-stage Github Action to build and deploy a containerized web-based application to your AKS Cluster
 
 ## Tools Used
 
@@ -31,9 +31,8 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
 
         You will have the option of using a PowerShell or a Bash (Linux) environment to run all subsequent sections of the lab. Select the environment you're most comfortable with.
 
-- [ ] 
        
-# Creating GitHub Action Workflows for Terraform 
+# Creating GitHub Action Workflows for Terraform and Kubernetes Resources
 
 In this lab we will be using Terraform and Github Actions to create Azure resources. GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that build and test every pull request to your repository, or deploy merged pull requests to production.
 
@@ -45,66 +44,71 @@ We will also use the HashiCorp Terraform Github Actions plugins to deploy Azure 
 
 In order to create resources programatically, Terraform must authenticate to Azure. Best practices for Terraform indicate that authentication should be done via Service Principal, instead of User accounts.
 
-Create a service principal that will be used by Terraform to authenticate to Azure (Note down password)
+## Adding Azure Connection information to Github
+
+In order to deploy to AKS with GitHub actions we must configure kubernentes connection information as secrets in GitHub.
+
+![GitHub Secrets](../assets/lab-1/github-secrets.png)
+
+Start by creating a new Service Principal:
 
 ```shell
 #Getting Your Subscription Information
 #BASH
 export SUBSCRIPTION_ID=$(az account show --query id --output tsv)
-
-az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
+az ad sp create-for-rbac --name "AKS" --role contributor \
+--scopes /subscriptions/${SUBSCRIPTION_ID} \
+--sdk-auth
 #PowerShell
 $env:SUBSCRIPTION_ID=(az account show --query id --output tsv
-az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/$env:SUBSCRIPTION_ID"
+az ad sp create-for-rbac --name "AKS" --role contributor \
+--scopes="/subscriptions/$env:SUBSCRIPTION_ID" \
+--sdk-auth
 ```
->**Note:** Make a note of the credential information that is provided after running this step, it is needed in subsequent stages
-
-## Adding Azure Connection information to Github
-
-In order for our Terraform GitHub actions to create resources in Azure, we must configure connection information as secrets in GitHub.
-
-![GitHub Secrets](../assets/lab-1/github-secrets.png)
-
 
 In the "Settings" page of your GitHub repository, select the "Secrets" section and create a new Repository Secret for the following required secret:
 
 
 | Name | Value|
 |:-|:-|
-|`AZURE_CREDENTIALS`| The AppID information from the Service principal ID from above|
+|`AZURE_CREDENTIALS`| The full output of the previous command|
 
 
 ## Creating your GitHub Workflows
 
-From Azure Cloud Shell, in the `lab-2-terraform-resources/workflows` directory of the repository you cloned there is are 2 GitHub Action definition files. In order to integrate them into your repository, copy the files to your existing `.github/workflows/` directory
+From Azure Cloud Shell, in the `lab-2-kubernetes-resources/workflows` directory of the repository you cloned there is are 2 GitHub Action definition files. 
+
+The first GitHub action we will run will create a new AKS environment.
+
+Copy the `lab-2-aks-actions.yml` file to your existing `.github/workflows` directory:
 
 ```shell
 cd ~/mcgill-devops-spring-2022
 ```
 
 ```shell
-cp lab-2-kubernetes-resources/workflows/resource-group-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
+cp lab-2-kubernetes-resources/workflows/lab-2-aks-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
 ```
 
 Commit your new changes to the Github Repository:
 
 ```
 git add ~/mcgill-devops-spring-2022/.github/workflows/*
-git commit -m "Adding GitHub Actions Workflow for "
+git commit -m "Adding AKS GitHub Actions Workflow for Lab 2"
 git push -u origin main
 ```
 
-## Creating Azure Resources
+## Creating AKS Resources
 
-Now that your repository is setup to for Static Code analysis and Compliance checks, test out the Actions workflow by updating the `backend.tf` file in the `resource-group` directory:
+Now that your repository is setup to deploy an AKS Cluster, including Static Code analysis and Compliance checks, test out the Actions workflow by updating the `backend.tf` file in the `lab-2-kubernetes-resources/terraform/aks-cluster/aks-cluster` directory:
 
 Update the following key-value pairs, with the Azure Resource group, Storage account and Storage Account container values you created in the previous steps: 
 
 ```shell
     resource_group_name  = "github-actions-tfstate"
-    storage_account_name = ""  ## Use the Storage Account name you set above
+    storage_account_name = ""  ## Use the Storage Account name you set in the previous lab
     container_name       = "tfstatedevops"
-    key                  = "resourcegroup.tfstate"
+    key                  = "lab-2-aks-cluster.tfstate"
 ```
 >**Hint:** You can open an Editor window from Shell by clicking the `{}` button at the top of your cloud shell window
 
@@ -114,88 +118,98 @@ Update the following key-value pairs, with the Azure Resource group, Storage acc
 Commit your changes to GitHub!
 
 ```
-git add lab-1-terraform-resources/terraform/resource-group/backend.tf
+git add lab-2-kubernetes-resources/terraform/aks-cluster/backend.tf
 git commit -m "Configuring Terraform backend for Azure Resource Group"
 git push -u origin main
 ```
 
-Inspect the stages of your CI pipeline, what errors do you see?
-
-
 Inspect your Github Actions CI workflow, review the different stages and the information provided by the workflows. What do you notice?
 
-Inspect the resources available in your [Azure portal](https://portal.azure.com/#blade/HubsExtension/BrowseResourceGroups) - do you have a new Resource Group? What else was created?
+Inspect the resources available in your [Azure portal](https://portal.azure.com/#blade/HubsExtension/BrowseResourceGroups) - do you have a new AKS Cluster? 
 
 
-## More Resource Creation
+## Deploying Containerized Applications 
 
-Create an Azure Kubernetes Cluster using your GitHub actions CI Pipeline
+Now that you have a Kubernetes environment, you can deploy a new web-based application to it.
+
+In the `lab-2-kubernetes-resources` folder, there are two additional folders, one for the containerized application and one for the deployment configuration information.
+To deploy these resources, we will need to create a new GitHub actions workflow:
 
 ## Create a New CI Pipeline
 
-Copy the `aks-actions.yml` workflow file to your `.github/workflows` directory:
+Once your AKS cluster creation is complete, inspect the output of the GitHub action - there will be 2 outputs, for the cluster name and the cluster resource group.
+
+Update the `lab-2-kubernetes-resources/workflows/docker-build-actions.yml` file by populating the following fields with the kubernetes cluster name and resource group information:
+
+```yaml
+env:
+  RESOURCE_GROUP: 
+  CLUSTER_NAME: 
+```
+
+Copy the updated `lab-2-kubernetes-resources/workflows/docker-build-actions.yml` workflow file to your `.github/workflows` directory:
 
 
 ```shell
-cd lab-1-terraform-resources/workflows
-cp aks-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
 cd ~/mcgill-devops-spring-2022
+cp lab-2-kubernetes-resources/workflows/docker-build-actions.yml ~/mcgill-devops-spring-2022/.github/workflows
 ```
 
-Commit your new changes to the Github Repository:
+Commit your  changes to the Github Repository:
 
 ```
 git add ~/mcgill-devops-spring-2022/.github/workflows/*
-git commit -m "Adding GitHub Actions Workflow for AKS Cluster Compliance and Security"
+git commit -m "Adding GitHub Actions Workflow to deploy Azure Voting Application"
 git push -u origin main
 ```
 
-Inspect your new Github Actions in the Github web UI
-
-## Creating Azure Kubernetes Service Resource
 
 
-Now that your repository is setup to perform Static Code analysis and Compliance checks, test out the new  Actions workflow by updating the `backend.tf` file in the `aks-cluster` directory:
+## Deploy a Containerized Application
 
-Update the following key-value pairs, with the Azure Resource group, Storage account and Storage Account container values you created previously: 
+Now that we have a workflow to build and deploy our application, we can customize our voting application and deploy it.
 
-```shell
-    resource_group_name  = "github-actions-tfstate"
-    storage_account_name = ""  ## Use the Storage Account name you set above
-    container_name       = "tfstatedevops"
-    key                  = "akscluster.tfstate"
-```
+Inspect the `values.yaml` file in the `lab-2-kubernetes-resources/helm-charts/azure-vote` folder. Update the values for `voteOption1` and `voteOption2` to items of your choice.
 
-Commit your changes to GitHub!
+Commit your changes and inspect the GitHub Action:
 
 ```
-git add lab-1-terraform-resources/terraform/aks-cluster/backend.tf
-git commit -m "Configuring Terraform backend for Azure Kubernetes Service"
+git add ~/mcgill-devops-spring-2022/lab-2-kubernetes-resources/helm-charts/azure-vote/values.yaml
+git commit -m "Adding Voting options for Azure Vote Application"
 git push -u origin main
 ```
 
-Inspect the stages of your CI pipeline, what errors do you see?
+Once your pipeline has completed, navigate to your [AKS Cluster in the Azure Portal](https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.ContainerService%2FmanagedClusters)
 
-## Correcting Validation Errors
+    ***Note***
+    Since we are using the Github Container Registry to host our container images you may have to change the visibility settings of your Container registry.
+    Navigate to your Github Profile page:
 
-Correct the value for the required tags to your AKS Cluster manifest in `main.tf`
+    ![GitHub Profile](../assets/lab-2/profile-page.png)
 
->**Hint** The list of accepted values will be displayed in the GitHub actions output.
+    From your profile page, select the packages tab:
 
-```
-git add lab-1-terraform-resources/terraform/aks-cluster/main.tf
-git commit -m "Adding Environment Tag for Compliance Checks"
-git push -u origin main
-```
+    ![GitHub Packages](../assets/lab-2/packages-page.png)
 
-Inspect your Github Actions CI workflow, review the different stages and the information provided by the workflows. What do you notice?
+    If your packages repository has a label of private, select it, and go to the settings section:
+
+    ![Package Settings](../assets/lab-2/package-settings.png)
+
+    Scroll to the bottom of the settings section and select `Change Visibility` to make it public
+
+
+Select the "Service and Ingress" for your cluster. What do you see?
+
+**Hint** There should be a section that says `External IP`
+
+Navigate to your Voting application, and inspect your application!
 
 
 ## Cleaning Up
 
 Once you are satisfied with your environments and finished exploring, you can clean up all the created resources by modifying the github Actions workflow to add a new step:
 
-Add the code snippet below to the bottom of the `aks-actions.yml` in your `.github/workflows` directory
+Add the code snippet below to the bottom of the `lab-2-aks-actions.yml` in your `.github/workflows` directory
 
 ```yaml
   terraform-destroy:
