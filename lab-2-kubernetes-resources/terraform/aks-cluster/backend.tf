@@ -5,5 +5,6 @@ terraform {
     container_name       = "tfstatedevops"
     key                  = "lab-2-aks-cluster.tfstate"
   }
+  
 }
 
