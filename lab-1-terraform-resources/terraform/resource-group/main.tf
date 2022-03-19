@@ -7,4 +7,10 @@ resource "azurerm_resource_group" "rg" {
   tags = {
     environment = "dev"
   }
+
+}
+provider "azurerm" {
+  # Configuration options
+  features {}
+
 }

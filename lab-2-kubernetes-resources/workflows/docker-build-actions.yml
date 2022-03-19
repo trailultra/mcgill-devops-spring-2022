@@ -1,0 +1,83 @@
+name: Create and publish a Docker image
+
+on:
+  push:
+    paths:
+      - 'lab-2-kubernetes-resources/container-image/**'
+      - 'lab-2-kubernetes-resources/helm-charts/**'
+      
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  RESOURCE_GROUP: 
+  CLUSTER_NAME: 
+  CHART_PATH: "lab-2-kubernetes-resources/helm-charts/azure-vote"
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1.14.1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: v1, latest
+      - name: Build and push Docker image
+        uses:  docker/build-push-action@v2
+        with:
+          context: lab-2-kubernetes-resources/container-image/
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  deploy-app:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write   
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    steps:
+      # Checks out the repository this file is in
+      - uses: actions/checkout@master
+      
+      # Logs in with your Azure credentials
+      - uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
+
+      # Runs Helm to create manifest files
+      - name: Bake deployment
+        uses: azure/k8s-bake@v2.1
+        with:
+          renderEngine: 'helm'
+          helmChart: ${{ env.CHART_PATH }}
+          overrideFiles: ${{ env.CHART_PATH}}/values.yaml
+          helm-version: 'latest'
+          overrides: |
+            frontend.image.version: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+
+        id: bake
+
+      # Deploys application based on manifest files from previous step
+      - name: Deploy application
+        uses: Azure/k8s-deploy@v3.0
+        with:
+          action: deploy
+          manifests: ${{ steps.bake.outputs.manifestsBundle }}

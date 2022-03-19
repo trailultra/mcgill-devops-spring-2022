@@ -7,6 +7,14 @@ In this exercise, you will practice using the core components of terraform inclu
 
 Create a multi-stage GitHub Action to deploy Azure-based resources that include integration and compliance testing of IaC objects as well as a manual approval stage prior to resource deployment
 
+## Tools Used
+
+- [Checkov](https://www.checkov.io/) - Static Code Analysis
+- [Terraform Compliance](https://terraform-compliance.com/) - security and compliance focused test framework
+- [GitHub Actions](https://github.com/features/actions) - Continuous Integration and Continuous Delivery
+- [Azure Portal](https://portal.azure.com/) - Cloud Infrastructure
+
+
 ## Environment Setup
 
 All steps in this lab exercise should be completed using the Azure Cloud Shell environment. All required tools including the Azure CLI, HashiCorp Terraform and the git CLI come pre-installed in this Cloud Shell Environment
@@ -22,8 +30,9 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
         You will have the option of using a PowerShell or a Bash (Linux) environment to run all subsequent sections of the lab. Select the environment you're most comfortable with.
 
 - [ ] Create an Azure Service Principal to use with GitHub and Terraform
-        
-        az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
+
+            az account show --query id --output tsv
+            az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>"
        
 - [ ] Create an SSH Key to securely access your GitHub Repos:
     PowerShell:
@@ -74,12 +83,25 @@ Additionally, because state files can contain sensitive information, access to i
 
 
 ```shell
+# Create your unique name for Azure storage (this is a bash example). Replace <Your prefix> with your choice
+#bash
+export STORAGE_ACCOUNT="githubactionstfstate<initials>"
+
+#PowerShell
+$env:STORAGE_ACCOUNT="githubactionstfstate<initials>"
+```
 
 # Create Storage Account
-az storage account create -n githubactionstfstate -g github-actions-tfstate -l eastus2 --sku Standard_LRS
- 
-# Create Storage Account Container
-az storage container create -n tfstatedevops 
+```
+#Bash
+az storage account create -n ${STORAGE_ACCOUNT}  -g github-actions-tfstate -l eastus2 --sku Standard_LRS
+az storage container create -n tfstatedevops  --account-name ${STORAGE_ACCOUNT}
+
+#PowerShell
+
+az storage account create -n  $env:STORAGE_ACCOUNT -g github-actions-tfstate -l eastus2 --sku Standard_LRS
+az storage container create -n tfstatedevops  --account-name  $env:STORAGE_ACCOUNT 
+
 ```
 
 In order to create resources programatically, Terraform must authenticate to Azure. Best practices for Terraform indicate that authentication should be done via Service Principal, instead of User accounts.
@@ -87,8 +109,14 @@ In order to create resources programatically, Terraform must authenticate to Azu
 Create a service principal that will be used by Terraform to authenticate to Azure (Note down password)
 
 ```shell
+#Getting Your Subscription Information
+#BASH
+export SUBSCRIPTION_ID=$(az account show --query id --output tsv)
 
 az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
+#PowerShell
+$env:SUBSCRIPTION_ID=(az account show --query id --output tsv
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/$env:SUBSCRIPTION_ID"
 ```
 >**Note:** Make a note of the credential information that is provided after running this step, it is needed in subsequent stages
 
@@ -104,8 +132,8 @@ In the "Settings" page of your GitHub repository, select the "Secrets" section a
 
 | Name | Value|
 |:-|:-|
-|`AZURE_AD_CLIENT_ID`| The Service principal ID from above|
-|`AZURE_AD_CLIENT_SECRET`| The secret that was created as part of the Azure Service Principal|
+|`AZURE_AD_CLIENT_ID`| The AppID information from the Service principal ID from above|
+|`AZURE_AD_CLIENT_SECRET`| The Password that was created as part of the Azure Service Principal|
 |`AZURE_AD_TENANT_ID`| The Azure AD tenant ID to where the service principal was created|
 |`AZURE_SUBSCRIPTION_ID`| Subscription ID of where you want to deploy the Terraform|
 
@@ -141,8 +169,6 @@ git commit -m "Adding GitHub Actions Workflow for Resource Group Compliance and 
 git push -u origin main
 ```
 
-Inspect your new Github Actions in the Github web UI
-
 ## Creating Azure Resources
 
 Now that your repository is setup to for Static Code analysis and Compliance checks, test out the Actions workflow by updating the `backend.tf` file in the `resource-group` directory:
@@ -151,7 +177,7 @@ Update the following key-value pairs, with the Azure Resource group, Storage acc
 
 ```shell
     resource_group_name  = "github-actions-tfstate"
-    storage_account_name = "githubactionstfstate"
+    storage_account_name = ""  ## Use the Storage Account name you set above
     container_name       = "tfstatedevops"
     key                  = "resourcegroup.tfstate"
 ```
@@ -231,7 +257,7 @@ Update the following key-value pairs, with the Azure Resource group, Storage acc
 
 ```shell
     resource_group_name  = "github-actions-tfstate"
-    storage_account_name = "githubactionstfstate"
+    storage_account_name = ""  ## Use the Storage Account name you set above
     container_name       = "tfstatedevops"
     key                  = "akscluster.tfstate"
 ```
