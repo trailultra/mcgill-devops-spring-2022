@@ -50,5 +50,4 @@ app.kubernetes.io/name: {{ include "azure-vote.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
 
