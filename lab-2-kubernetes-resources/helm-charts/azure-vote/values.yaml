@@ -26,8 +26,8 @@ frontend:
     port: 80
   env:
     backendName: azure-vote-backend-master
-    voteOption1: "Fish"
-    voteOption2: "Birds"
+    voteOption1: "running"
+    voteOption2: "skiing"
   imagePullSecrets: []
 
   podAnnotations: {}
