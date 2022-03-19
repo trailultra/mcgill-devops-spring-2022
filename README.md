@@ -21,7 +21,7 @@ This set of exercises uses GitHub, GitHub Actions, and the Azure Portal.
 
 ## Lab Exercise 1: Configuring Cloud Deployments with Terraform
 
-In this exercise, you will practice building and deploying containerized applications to Azure Kubernetes Service.
+In this exercise, you will practice using the core components of terraform including providers, modules and resources to create and manage the lifecycle of cloud based resources.
 
 
 ### Exercise objectives
@@ -34,7 +34,7 @@ Create a multi-stage GitHub Action to deploy Azure-based resources that include 
 
 ## Lab Exercise 2: Deploying Kubernetes Resources
 
-In this exercise, you will practice using the core components of terraform including providers, modules and resources to create and manage the lifecycle of cloud based resources.
+In this exercise, you will practice building and deploying containerized applications to Azure Kubernetes Service.
 
 ### Exercise objectives
 
