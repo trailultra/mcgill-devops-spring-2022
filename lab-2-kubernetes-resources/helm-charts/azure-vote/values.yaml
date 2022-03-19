@@ -18,9 +18,8 @@ frontend:
   replicaCount: 1
   fullnameOverride: azure-vote-frontend
   image:
-    repository: 
+    version: 
     pullPolicy: Always
-    tag: ""
   service:
     type: LoadBalancer
     port: 80
