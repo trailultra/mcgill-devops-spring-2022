@@ -177,21 +177,21 @@ git push -u origin main
 
 Once your pipeline has completed, navigate to your [AKS Cluster in the Azure Portal](https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.ContainerService%2FmanagedClusters)
 
-    ***Note***
-    Since we are using the Github Container Registry to host our container images you may have to change the visibility settings of your Container registry.
-    Navigate to your Github Profile page:
+  ***Note***
+  Since we are using the Github Container Registry to host our container images you may have to change the visibility settings of your Container registry.
+  Navigate to your Github Profile page:
 
-    ![GitHub Profile](../assets/lab-2/profile-page.png)
+  ![GitHub Profile](../assets/lab-2/profile-page.png)
 
-    From your profile page, select the packages tab:
+  From your profile page, select the packages tab:
 
-    ![GitHub Packages](../assets/lab-2/packages-page.png)
+  ![GitHub Packages](../assets/lab-2/packages-page.png)
 
-    If your packages repository has a label of private, select it, and go to the settings section:
+  If your packages repository has a label of private, select it, and go to the settings section:
 
-    ![Package Settings](../assets/lab-2/package-settings.png)
+  ![Package Settings](../assets/lab-2/package-settings.png)
 
-    Scroll to the bottom of the settings section and select `Change Visibility` to make it public
+  Scroll to the bottom of the settings section and select `Change Visibility` to make it public
 
 
 Select the "Service and Ingress" for your cluster. What do you see?
