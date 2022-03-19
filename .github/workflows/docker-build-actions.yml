@@ -36,8 +36,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-              type=sha
+          tags: v1, latest
       - name: Build and push Docker image
         uses:  docker/build-push-action@v2
         with:
@@ -69,8 +68,11 @@ jobs:
         with:
           renderEngine: 'helm'
           helmChart: ${{ env.CHART_PATH }}
-          overrideFiles: ${{ env.CHART_OVERRIDE_PATH }}
-          helm-version: 'latest' 
+          overrideFiles: ${{ env.CHART_PATH}}/values.yaml
+          helm-version: 'latest'
+          overrides: |
+            frontend.image.repository: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            frontend.image.tag: 'v1'
         id: bake
 
       # Deploys application based on manifest files from previous step
@@ -79,5 +81,3 @@ jobs:
         with:
           action: deploy
           manifests: ${{ steps.bake.outputs.manifestsBundle }}
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
