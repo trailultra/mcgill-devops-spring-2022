@@ -14,8 +14,8 @@ In this exercise, you will practice creating and deploying a web-based applicati
 - [Checkov](https://www.checkov.io/) - Static Code Analysis
 - [Terraform Compliance](https://terraform-compliance.com/) - security and compliance focused test framework
 - [GitHub Actions](https://github.com/features/actions) - Continuous Integration and Continuous Delivery
-- [GitHub Container Registry]
-- [Helm]
+- [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+- [Helm](https://helm.sh/)
 - [Azure Portal](https://portal.azure.com/) - Cloud Infrastructure
 
 
@@ -23,26 +23,19 @@ In this exercise, you will practice creating and deploying a web-based applicati
 
 All steps in this lab exercise should be completed using the Azure Cloud Shell environment. All required tools including the Azure CLI, HashiCorp Terraform and the git CLI come pre-installed in this Cloud Shell Environment
 
-- [ ] Login to the [Azure Portal](https://portal.azure.com/) with the login information you created
+- [ ] Login to the [Azure Portal](https://portal.azure.com/) with the login information you created in the previous lab
 
     - [ ] Launch Azure Cloud Shell from the top navigation panel
         
         ![Azure Cloud Shell](../assets/lab-1/shell-icon.png)
 
         You will have the option of using a PowerShell or a Bash (Linux) environment to run all subsequent sections of the lab. Select the environment you're most comfortable with.
-
-       
+     
 # Creating GitHub Action Workflows for Terraform and Kubernetes Resources
 
 In this lab we will be using Terraform and Github Actions to create Azure resources. GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that build and test every pull request to your repository, or deploy merged pull requests to production.
 
-We will define 2 types of GitHub Actions, that will check for Security Compliance against standardized baselines using [Checkov](https://www.checkov.io/) and for custom Code Compliance standards with [Terraform Compliance](https://terraform-compliance.com/) 
-
-We will also use the HashiCorp Terraform Github Actions plugins to deploy Azure resources if our Security and Code compliance checks pass
-
-## Preparing Azure resources for Terraform
-
-In order to create resources programatically, Terraform must authenticate to Azure. Best practices for Terraform indicate that authentication should be done via Service Principal, instead of User accounts.
+We will define 2 types of GitHub Actions, one that will build our Azure Kubernetes Service Cluster, and one that will build and deploy a containerized application to our cluster.
 
 ## Adding Azure Connection information to Github
 
@@ -54,11 +47,14 @@ Start by creating a new Service Principal:
 
 ```shell
 #Getting Your Subscription Information
+
 #BASH
 export SUBSCRIPTION_ID=$(az account show --query id --output tsv)
 az ad sp create-for-rbac --name "AKS" --role contributor \
 --scopes /subscriptions/${SUBSCRIPTION_ID} \
 --sdk-auth
+
+
 #PowerShell
 $env:SUBSCRIPTION_ID=(az account show --query id --output tsv
 az ad sp create-for-rbac --name "AKS" --role contributor \
@@ -76,11 +72,11 @@ In the "Settings" page of your GitHub repository, select the "Secrets" section a
 
 ## Creating your GitHub Workflows
 
-From Azure Cloud Shell, in the `lab-2-kubernetes-resources/workflows` directory of the repository you cloned there is are 2 GitHub Action definition files. 
+In the `lab-2-kubernetes-resources/workflows` directory of the repository you cloned there is are 2 GitHub Action definition files. 
 
 The first GitHub action we will run will create a new AKS environment.
 
-Copy the `lab-2-aks-actions.yml` file to your existing `.github/workflows` directory:
+Using Azure Cloud Shell, copy the `lab-2-aks-actions.yml` file to your existing `.github/workflows` directory:
 
 ```shell
 cd ~/mcgill-devops-spring-2022
