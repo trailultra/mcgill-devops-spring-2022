@@ -71,7 +71,7 @@ jobs:
           overrideFiles: ${{ env.CHART_PATH}}/values.yaml
           helm-version: 'latest'
           overrides: |
-            frontend.image.version: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v1"
+            frontend.image.version: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
 
         id: bake
 
