@@ -5,5 +5,7 @@ terraform {
     container_name       = "tfstatedevops"
     key                  = "resourcegroup.tfstate"
   }
+  
+  
 }
 
