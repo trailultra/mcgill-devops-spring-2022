@@ -35,8 +35,6 @@ spec:
             value: {{ .Values.frontend.env.voteOption1 }}
           - name: OPTION2
             value: {{ .Values.frontend.env.voteOption2 }}
-          - name: SHOWHOST
-            value: {{ .Values.frontend.env.showHostName }}
           ports:
             - name: http
               containerPort: 80
