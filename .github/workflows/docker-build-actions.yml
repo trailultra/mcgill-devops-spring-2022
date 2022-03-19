@@ -72,7 +72,7 @@ jobs:
           helm-version: 'latest'
           overrides: |
             frontend.image.repository: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            frontend.image.tag: 'v1'
+            frontend.image.tag: v1
         id: bake
 
       # Deploys application based on manifest files from previous step
