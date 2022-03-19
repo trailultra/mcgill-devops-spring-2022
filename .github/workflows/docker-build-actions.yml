@@ -71,8 +71,8 @@ jobs:
           overrideFiles: ${{ env.CHART_PATH}}/values.yaml
           helm-version: 'latest'
           overrides: |
-            frontend.image.repository: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            frontend.image.tag: v1
+            frontend.image.version: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v1"
+
         id: bake
 
       # Deploys application based on manifest files from previous step
