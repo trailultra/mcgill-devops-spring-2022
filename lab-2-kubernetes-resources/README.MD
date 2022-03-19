@@ -30,7 +30,17 @@ All steps in this lab exercise should be completed using the Azure Cloud Shell e
         ![Azure Cloud Shell](../assets/lab-1/shell-icon.png)
 
         You will have the option of using a PowerShell or a Bash (Linux) environment to run all subsequent sections of the lab. Select the environment you're most comfortable with.
-     
+## Syncing Changes
+
+In order to get all the new labs and workflow files, you will need to incorporate the changes made in the upstream repository:
+
+```shell
+git remote add upstream git@github.com:jennviau/mcgill-devops-spring-2022.git
+git fetch upstream
+git pull upstream main
+git push origin
+```
+
 # Creating GitHub Action Workflows for Terraform and Kubernetes Resources
 
 In this lab we will be using Terraform and Github Actions to create Azure resources. GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that build and test every pull request to your repository, or deploy merged pull requests to production.
