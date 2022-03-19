@@ -17,7 +17,7 @@ jobs:
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
-          directory: lab-2-terraform-resources/terraform/aks-cluster
+          directory: lab-2-kubernetes-resources/terraform/aks-cluster
           soft_fail: true 
           framework: terraform
           output_format: github_failed_only
