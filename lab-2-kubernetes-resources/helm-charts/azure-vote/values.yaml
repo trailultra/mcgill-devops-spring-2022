@@ -11,6 +11,7 @@ redis:
   fullnameOverride: azure-vote-backend
   auth:
     enabled: false
+    architecture: standalone
 
 
 frontend:
@@ -18,7 +19,7 @@ frontend:
   fullnameOverride: azure-vote-frontend
   image:
     repository: 
-    pullPolicy: 
+    pullPolicy: Always
     tag: ""
   service:
     type: LoadBalancer
